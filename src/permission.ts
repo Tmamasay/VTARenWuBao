@@ -22,31 +22,34 @@ const getPageTitle = (key: string) => {
 }
 
 router.beforeEach(async(to: Route, _: Route, next: any) => {
-  // Start progress bar
+  // 开始进度条
   NProgress.start()
 
-  // Determine whether the user has logged in
+  // 确定用户是否已登录
   if (UserModule.token) {
     if (to.path === '/login') {
-      // If is logged in, redirect to the home page
+      // 如果已登录，请重定向到主页
       next({ path: '/' })
       NProgress.done()
     } else {
-      // Check whether the user has obtained his permission roles
+      // 检查用户是否获得了权限角色
       if (UserModule.roles.length === 0) {
         try {
-          // Note: roles must be a object array! such as: ['admin'] or ['developer', 'editor']
+          // Note: 角色必须是对象数组！例如：['admin']或['developer'，'editor']
           await UserModule.GetUserInfo()
-          const roles = UserModule.roles
-          // Generate accessible routes map based on role
-          PermissionModule.GenerateRoutes(roles)
-          // Dynamically add accessible routes
+          // debugger
+          const menus = UserModule.menu
+          // 基于角色生成可访问路由图
+          PermissionModule.GenerateRoutes(menus)
+          // 动态添加可访问路由
           router.addRoutes(PermissionModule.dynamicRoutes)
-          // Hack: ensure addRoutes is complete
+          // Hack: 确保addroutes已完成
           // Set the replace: true, so the navigation will not leave a history record
+          // 设置replace:true，这样导航就不会留下历史记录
           next({ ...to, replace: true })
         } catch (err) {
-          // Remove token and redirect to login page
+          // 删除令牌并重定向到登录页
+          debugger
           UserModule.ResetToken()
           Message.error(err || 'Has Error')
           next(`/login?redirect=${to.path}`)
@@ -59,10 +62,11 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
   } else {
     // Has no token
     if (whiteList.indexOf(to.path) !== -1) {
-      // In the free login whitelist, go directly
+      // 在免费登录白名单中，直接进入
+
       next()
     } else {
-      // Other pages that do not have permission to access are redirected to the login page.
+      // 没有访问权限的其他页将重定向到登录页。
       next(`/login?redirect=${to.path}`)
       NProgress.done()
     }

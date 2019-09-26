@@ -7,13 +7,6 @@ export const getUsers = (params: any) =>
     params
   })
 
-export const getUserInfo = (data: any) =>
-  request({
-    url: '/users/info',
-    method: 'post',
-    data
-  })
-
 export const getUserByName = (username: string) =>
   request({
     url: `/users/${username}`,
@@ -35,7 +28,14 @@ export const deleteUser = (username: string) =>
 
 export const login = (data: any) =>
   request({
-    url: '/users/login',
+    url: '/admin/api/doLogin',
+    method: 'post',
+    data
+  })
+
+export const getUserMenu = (data: any) =>
+  request({
+    url: '/admin/api/permission',
     method: 'post',
     data
   })

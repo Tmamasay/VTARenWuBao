@@ -1,5 +1,5 @@
 import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-decorators'
-import { login, logout, getUserInfo } from '@/api/users'
+import { login, logout, getUserMenu } from '@/api/users'
 import { getToken, setToken, removeToken } from '@/utils/cookies'
 import router, { resetRouter } from '@/router'
 import { PermissionModule } from './permission'
@@ -13,8 +13,21 @@ export interface IUserState {
   introduction: string
   roles: string[]
   email: string
+  menu: any
 }
-
+export const filterData = (data: any) => {
+  for (const key of Object.keys(data)) {
+    // console.log(key.match(/^\.$/))
+    if (key.match(/^\./)) {
+      // debugger
+      delete data[key]
+    }
+    // if(data.hasOwnProperty(key)) {
+    //   data[key];
+    // }
+  }
+  return data
+}
 @Module({ dynamic: true, store, name: 'user' })
 class User extends VuexModule implements IUserState {
   public token = getToken() || ''
@@ -23,6 +36,7 @@ class User extends VuexModule implements IUserState {
   public introduction = ''
   public roles: string[] = []
   public email = ''
+  public menu = {}
 
   @Mutation
   private SET_TOKEN(token: string) {
@@ -45,6 +59,10 @@ class User extends VuexModule implements IUserState {
   }
 
   @Mutation
+  private SET_MENU(menu: any) {
+    this.menu = menu
+  }
+  @Mutation
   private SET_ROLES(roles: string[]) {
     this.roles = roles
   }
@@ -55,12 +73,12 @@ class User extends VuexModule implements IUserState {
   }
 
   @Action
-  public async Login(userInfo: { username: string, password: string}) {
-    let { username, password } = userInfo
-    username = username.trim()
-    const { data } = await login({ username, password })
-    setToken(data.accessToken)
-    this.SET_TOKEN(data.accessToken)
+  public async Login(userInfo: { user: string, pwd: string }) {
+    let { user, pwd } = userInfo
+    user = user.trim()
+    const data: any = await login({ user, pwd })
+    setToken(data.token)
+    this.SET_TOKEN(data.token)
   }
 
   @Action
@@ -75,20 +93,26 @@ class User extends VuexModule implements IUserState {
     if (this.token === '') {
       throw Error('GetUserInfo: token is undefined!')
     }
-    const { data } = await getUserInfo({ /* Your params here */ })
+    // debugger
+    const data: any = await getUserMenu({})
+    const filterDataFirst = filterData(data.permissionGroup)
     if (!data) {
       throw Error('Verification failed, please Login again.')
     }
-    const { roles, name, avatar, introduction, email } = data.user
-    // roles must be a non-empty array
-    if (!roles || roles.length <= 0) {
-      throw Error('GetUserInfo: roles must be a non-null array!')
-    }
-    this.SET_ROLES(roles)
-    this.SET_NAME(name)
-    this.SET_AVATAR(avatar)
-    this.SET_INTRODUCTION(introduction)
-    this.SET_EMAIL(email)
+    // debugger
+    // const { roles, name, avatar, introduction, email } = data.user
+    // // roles must be a non-empty array
+    // if (!roles || roles.length <= 0) {
+    //   throw Error('GetUserInfo: roles must be a non-null array!')
+    // }
+    console.log(filterDataFirst)
+    debugger
+    this.SET_MENU(filterDataFirst)
+    // this.SET_ROLES(roles)
+    // this.SET_NAME(name)
+    // this.SET_AVATAR(avatar)
+    // this.SET_INTRODUCTION(introduction)
+    // this.SET_EMAIL(email)
   }
 
   @Action

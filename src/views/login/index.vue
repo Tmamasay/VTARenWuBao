@@ -21,9 +21,9 @@
         </span>
         <el-input
           ref="username"
-          v-model="loginForm.username"
+          v-model="loginForm.user"
           :placeholder="$t('login.username')"
-          name="username"
+          name="user"
           type="text"
           autocomplete="on"
         />
@@ -36,10 +36,10 @@
         <el-input
           :key="passwordType"
           ref="password"
-          v-model="loginForm.password"
+          v-model="loginForm.pwd"
           :type="passwordType"
           :placeholder="$t('login.password')"
-          name="password"
+          name="pwd"
           autocomplete="on"
           @keyup.enter.native="handleLogin"
         />
@@ -60,7 +60,7 @@
         {{ $t('login.logIn') }}
       </el-button>
 
-      <div style="position:relative">
+      <!-- <div style="position:relative">
         <div class="tips">
           <span>{{ $t('login.username') }} : admin </span>
           <span>{{ $t('login.password') }} : {{ $t('login.any') }} </span>
@@ -77,10 +77,10 @@
         >
           {{ $t('login.thirdparty') }}
         </el-button>
-      </div>
+      </div> -->
     </el-form>
 
-    <el-dialog
+    <!-- <el-dialog
       :title="$t('login.thirdparty')"
       :visible.sync="showDialog"
     >
@@ -89,7 +89,7 @@
       <br>
       <br>
       <social-sign />
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -113,25 +113,25 @@ import SocialSign from './components/SocialSignin.vue'
 export default class extends Vue {
   private validateUsername = (rule: any, value: string, callback: Function) => {
     if (!isValidUsername(value)) {
-      callback(new Error('Please enter the correct user name'))
+      callback(new Error('请输入正确的用户名'))
     } else {
       callback()
     }
   }
   private validatePassword = (rule: any, value: string, callback: Function) => {
     if (value.length < 6) {
-      callback(new Error('The password can not be less than 6 digits'))
+      callback(new Error('密码必须大于6位数'))
     } else {
       callback()
     }
   }
   private loginForm = {
-    username: 'admin',
-    password: '111111'
+    user: 'admin',
+    pwd: 'admin123'
   }
   private loginRules = {
-    username: [{ validator: this.validateUsername, trigger: 'blur' }],
-    password: [{ validator: this.validatePassword, trigger: 'blur' }]
+    user: [{ validator: this.validateUsername, trigger: 'blur' }],
+    pwd: [{ validator: this.validatePassword, trigger: 'blur' }]
   }
   private passwordType = 'password'
   private loading = false
@@ -151,9 +151,9 @@ export default class extends Vue {
   }
 
   mounted() {
-    if (this.loginForm.username === '') {
+    if (this.loginForm.user === '') {
       (this.$refs.username as Input).focus()
-    } else if (this.loginForm.password === '') {
+    } else if (this.loginForm.pwd === '') {
       (this.$refs.password as Input).focus()
     }
   }
@@ -175,8 +175,8 @@ export default class extends Vue {
         this.loading = true
         await UserModule.Login(this.loginForm)
         this.$router.push({
-          path: this.redirect || '/',
-          query: this.otherQuery
+          path: this.redirect || '/'
+          // query: this.otherQuery,
         })
         // Just to simulate the time of the request
         setTimeout(() => {
