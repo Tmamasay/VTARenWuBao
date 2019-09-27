@@ -1,5 +1,5 @@
 import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-decorators'
-import { login, logout, getUserMenu } from '@/api/users'
+import { login, logout, getMenuGroup } from '@/api/users'
 import { getToken, setToken, removeToken } from '@/utils/cookies'
 import router, { resetRouter } from '@/router'
 import { PermissionModule } from './permission'
@@ -94,8 +94,11 @@ class User extends VuexModule implements IUserState {
       throw Error('GetUserInfo: token is undefined!')
     }
     // debugger
-    const data: any = await getUserMenu({})
-    const filterDataFirst = filterData(data.permissionGroup)
+    const data: any = await getMenuGroup({})
+    console.log(data)
+    debugger
+    // const filterDataFirst = filterData(data.systemMenuGroups)
+    const filterDataFirst = data.systemMenuGroups
     if (!data) {
       throw Error('Verification failed, please Login again.')
     }

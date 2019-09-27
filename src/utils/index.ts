@@ -86,3 +86,20 @@ export const toggleClass = (ele: HTMLElement, className: string) => {
   }
   ele.className = classString
 }
+export const getComponent = (component: string) => {
+  // const reg = /(http|https):\/\/([\w.]+\/?)\S*/
+  const reg = /[\w.]+\:([\w.]+\/?)\S*/
+  if (reg.test(component)) {
+    debugger
+    return `otherUrl`
+  } else {
+    const components = component.split('/')
+    debugger
+    return components[components.length - 1]
+  }
+}
+export const getUrlCompent = (url: string) => {
+  // const reg = /(http|https):\/\/([\w.]+\/?)\S*/
+  const urlStr = url.split('/')
+  return urlStr[urlStr.length - 1] + urlStr[urlStr.length]
+}

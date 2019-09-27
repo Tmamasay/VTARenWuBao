@@ -39,6 +39,12 @@ export const getUserMenu = (data: any) =>
     method: 'post',
     data
   })
+export const getMenuGroup = (data: any) =>
+  request({
+    url: '/admin/api/menuGroup',
+    method: 'post',
+    data
+  })
 
 export const logout = () =>
   request({
