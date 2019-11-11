@@ -100,6 +100,7 @@ import { Dictionary } from 'vuex'
 import { Form as ElForm, Input } from 'element-ui'
 import { UserModule } from '@/store/modules/user'
 import { isValidUsername } from '@/utils/validate'
+import { StrMd5 } from '@/utils/index'
 import LangSelect from '@/components/LangSelect/index.vue'
 import SocialSign from './components/SocialSignin.vue'
 
@@ -126,8 +127,8 @@ export default class extends Vue {
     }
   }
   private loginForm = {
-    user: 'admin',
-    pwd: 'admin123'
+    user: '',
+    pwd: ''
   }
   private loginRules = {
     user: [{ validator: this.validateUsername, trigger: 'blur' }],
@@ -173,7 +174,16 @@ export default class extends Vue {
     (this.$refs.loginForm as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         this.loading = true
-        await UserModule.Login(this.loginForm)
+        // this.loginForm.pwd = StrMd5(this.loginForm.pwd)
+        // let username = this.loginForm.user
+        // let password = this.loginForm.pwd
+
+        const parm = {
+          userAccount: this.loginForm.user,
+          password: StrMd5(this.loginForm.pwd)
+        }
+        debugger
+        await UserModule.Login(parm)
         this.$router.push({
           path: this.redirect || '/'
           // query: this.otherQuery,

@@ -80,9 +80,9 @@ export const constantRoutes: RouteConfig[] = [
       {
         path: 'dashboard',
         component: () => import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/index.vue'),
-        name: 'Dashboard',
+        name: '首页',
         meta: {
-          title: 'dashboard',
+          title: '首页',
           icon: 'dashboard',
           affix: true
         }
@@ -101,23 +101,23 @@ export const constantRoutes: RouteConfig[] = [
   //     }
   //   ]
   // },
-  {
-    path: '/guide',
-    component: Layout,
-    redirect: '/guide/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import(/* webpackChunkName: "guide" */ '@/views/guide/index.vue'),
-        name: 'Guide',
-        meta: {
-          title: 'guide',
-          icon: 'guide',
-          noCache: true
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/guide',
+  //   component: Layout,
+  //   redirect: '/guide/index',
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import(/* webpackChunkName: "guide" */ '@/views/guide/index.vue'),
+  //       name: 'Guide',
+  //       meta: {
+  //         title: 'guide',
+  //         icon: 'guide',
+  //         noCache: true
+  //       }
+  //     }
+  //   ]
+  // },
   {
     path: '/profile',
     component: Layout,

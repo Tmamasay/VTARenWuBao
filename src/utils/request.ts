@@ -34,7 +34,7 @@ service.interceptors.response.use(
     // code == 50005: username or password is incorrect
     // You can change this part for your own usage.
     const res = response.data
-    if (res.state !== 'ok') {
+    if (res.code !== 1) {
       Message({
         message: res.message || 'Error',
         type: 'error',
@@ -56,6 +56,7 @@ service.interceptors.response.use(
       }
       return Promise.reject(new Error(res.message || 'Error'))
     } else {
+      // debugger
       return response.data
     }
   },

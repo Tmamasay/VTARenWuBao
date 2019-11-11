@@ -1,5 +1,5 @@
 import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-decorators'
-import { login, logout, getMenuGroup } from '@/api/users'
+import { login, logout, getUserAndMenu } from '@/api/users'
 import { getToken, setToken, removeToken } from '@/utils/cookies'
 import router, { resetRouter } from '@/router'
 import { PermissionModule } from './permission'
@@ -73,12 +73,13 @@ class User extends VuexModule implements IUserState {
   }
 
   @Action
-  public async Login(userInfo: { user: string, pwd: string }) {
-    let { user, pwd } = userInfo
-    user = user.trim()
-    const data: any = await login({ user, pwd })
-    setToken(data.token)
-    this.SET_TOKEN(data.token)
+  public async Login(userInfo: { userAccount: string, password: string }) {
+    let { userAccount, password } = userInfo
+    userAccount = userAccount.trim()
+    const data: any = await login({ userAccount, password })
+    setToken(data.data.token)
+    this.SET_TOKEN(data.data.token)
+    // debugger
   }
 
   @Action
@@ -89,29 +90,30 @@ class User extends VuexModule implements IUserState {
   }
 
   @Action
-  public async GetUserInfo() {
+  public async GetUserInfo(token: string) {
     if (this.token === '') {
       throw Error('GetUserInfo: token is undefined!')
     }
     // debugger
-    const data: any = await getMenuGroup({})
+    const data: any = await getUserAndMenu({ token: token })
     console.log(data)
-    debugger
+    // debugger
     // const filterDataFirst = filterData(data.systemMenuGroups)
-    const filterDataFirst = data.systemMenuGroups
+    const filterDataFirst = data.data.list
     if (!data) {
       throw Error('Verification failed, please Login again.')
     }
     // debugger
-    // const { roles, name, avatar, introduction, email } = data.user
+    const roles = []
+    roles.push(data.data.hnSysUser.userType)
     // // roles must be a non-empty array
     // if (!roles || roles.length <= 0) {
     //   throw Error('GetUserInfo: roles must be a non-null array!')
     // }
     console.log(filterDataFirst)
-    debugger
+    // debugger
     this.SET_MENU(filterDataFirst)
-    // this.SET_ROLES(roles)
+    this.SET_ROLES(roles)
     // this.SET_NAME(name)
     // this.SET_AVATAR(avatar)
     // this.SET_INTRODUCTION(introduction)
@@ -121,10 +123,11 @@ class User extends VuexModule implements IUserState {
   @Action
   public async ChangeRoles(role: string) {
     // Dynamically modify permissions
+    const ParmToken = this.token
     const token = role + '-token'
     this.SET_TOKEN(token)
     setToken(token)
-    await this.GetUserInfo()
+    await this.GetUserInfo(ParmToken)
     resetRouter()
     // Generate dynamic accessible routes based on roles
     PermissionModule.GenerateRoutes(this.roles)

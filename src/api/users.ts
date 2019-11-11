@@ -6,6 +6,20 @@ export const getUsers = (params: any) =>
     method: 'get',
     params
   })
+// 登录入口
+export const login = (data: any) =>
+  request({
+    url: '/api/auth/v1/adminLogin',
+    method: 'post',
+    data
+  })
+// 获取用户和用户的权限菜单-蔡洋
+export const getUserAndMenu = (params: any) =>
+  request({
+    url: '/admin-web/api/v1/admin/hnSysUser/getUserAndMenu',
+    method: 'get',
+    params
+  })
 
 export const getUserByName = (username: string) =>
   request({
@@ -26,12 +40,12 @@ export const deleteUser = (username: string) =>
     method: 'delete'
   })
 
-export const login = (data: any) =>
-  request({
-    url: '/admin/api/doLogin',
-    method: 'post',
-    data
-  })
+// export const login = (data: any) =>
+//   request({
+//     url: '/admin/api/doLogin',
+//     method: 'post',
+//     data
+//   })
 
 export const getUserMenu = (data: any) =>
   request({

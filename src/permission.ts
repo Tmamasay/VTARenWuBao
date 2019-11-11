@@ -36,13 +36,15 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
       if (UserModule.roles.length === 0) {
         try {
           // Note: 角色必须是对象数组！例如：['admin']或['developer'，'editor']
-          await UserModule.GetUserInfo()
+          await UserModule.GetUserInfo(UserModule.token)
           // debugger
           const menus = UserModule.menu
           // 基于角色生成可访问路由图
           PermissionModule.GenerateRoutes(menus)
           // 动态添加可访问路由
           router.addRoutes(PermissionModule.dynamicRoutes)
+          console.log(PermissionModule.dynamicRoutes)
+          debugger
           // Hack: 确保addroutes已完成
           // Set the replace: true, so the navigation will not leave a history record
           // 设置replace:true，这样导航就不会留下历史记录

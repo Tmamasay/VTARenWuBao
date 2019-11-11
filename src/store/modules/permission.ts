@@ -1,10 +1,10 @@
 import { VuexModule, Module, Mutation, Action, getModule } from 'vuex-module-decorators'
 import { RouteConfig } from 'vue-router'
-import { asyncRoutes, constantRoutes } from '@/router'
-import { getComponent,getUrlCompent} from '@/utils'
-import Layout from '@/layout'
+import { constantRoutes } from '@/router'
+import { getComponent } from '@/utils'
+import Layout from '@/layout/index.vue'
+// import Layout from '@/layout'
 import store from '@/store'
-
 export interface routerZDY {
   path: string
   name: string
@@ -35,21 +35,21 @@ export interface routerZDY {
 // }
 export const componentsMap: any = {
   // 渠道商列表(超级管理员)
-  article: () => import('@/views/charts/line-chart.vue')
+  findRechargeCashPageOEM: () => import('@/views/charts/line-chart.vue')
 }
 export const generateRouter = (item: any, isParent: boolean) => {
   const reg = /\/([\w.]+\/?)\S*/
-  const fmeta = { title: item.text, icon: 'documentation', affix: false }
-  const cmeta = { title: `${item.text}` }
-  const ccomponent = isParent ? '1' : getComponent(item.permission)
-  console.log(item.permission)
+  const fmeta = { title: item.menuName, icon: 'documentation', noCache: false }
+  const cmeta = { title: `${item.menuName}` }
+  const ccomponent = isParent ? '1' : getComponent(item.menuUrl)
+  console.log(item.menuUrl)
   // const otherU = item.permission.split('=')[1]
   // console.log('===========------------->')
   // console.log(otherU)
   const router: routerZDY = {
     // path: getUrlCompent(item.permission),
-    path: item.permission,
-    name: item.text,
+    path: item.menuUrl,
+    name: item.menuName,
     meta: isParent ? fmeta : cmeta,
     // component: isParent ? Layout : () => import(item.component)
     component: isParent ? Layout : componentsMap[ccomponent]
@@ -62,8 +62,9 @@ export const filterAsyncRoutes = (routes: any) => {
     routes.forEach((route: any) => {
       const parent = generateRouter(route, true)
       var children: any[] = []
-      if (route.items) {
-        route.items.forEach((child: any) => {
+      debugger
+      if (route.childList) {
+        route.childList.forEach((child: any) => {
           children.push(generateRouter(child, false))
         })
       }
@@ -76,6 +77,7 @@ export const filterAsyncRoutes = (routes: any) => {
       //   res.push(r)
     })
   }
+  res.push({ path: '*', redirect: '/404', hidden: true })
   return res
 }
 
@@ -93,6 +95,8 @@ class Permission extends VuexModule implements IPermissionState {
   private SET_ROUTES(routes: RouteConfig[]) {
     this.routes = constantRoutes.concat(routes)
     this.dynamicRoutes = routes
+    console.log('00000000====99999999')
+    console.log(this.dynamicRoutes)
   }
 
   // @Action

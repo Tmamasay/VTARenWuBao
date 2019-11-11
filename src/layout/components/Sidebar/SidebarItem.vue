@@ -16,10 +16,14 @@
             v-if="theOnlyOneChild.meta.icon"
             :name="theOnlyOneChild.meta.icon"
           />
+          <!-- <svg-icon
+            v-else
+            name="documentation"
+          /> -->
           <span
             v-if="theOnlyOneChild.meta.title"
             slot="title"
-          >{{ $t('route.' + theOnlyOneChild.meta.title) }}</span>
+          >{{ theOnlyOneChild.meta.title }}</span>
         </el-menu-item>
       </sidebar-item-link>
     </template>
@@ -33,10 +37,11 @@
           v-if="item.meta && item.meta.icon"
           :name="item.meta.icon"
         />
+
         <span
           v-if="item.meta && item.meta.title"
           slot="title"
-        >{{ $t('route.' + item.meta.title) }}</span>
+        >{{ item.meta.title }}</span>
       </template>
       <template v-if="item.children">
         <sidebar-item
@@ -99,15 +104,29 @@ export default class extends Vue {
     if (this.showingChildNumber > 1) {
       return null
     }
-    if (this.item.children) {
+    if (this.item.children && this.showingChildNumber === 1) {
       for (let child of this.item.children) {
         if (!child.meta || !child.meta.hidden) {
+          if (!child.meta.icon) {
+            Object.assign(child.meta, {
+              affix: false,
+              icon: 'documentation'
+            })
+          }
           return child
         }
       }
     }
-    // If there is no children, return itself with path removed,
-    // because this.basePath already conatins item's path information
+    // if (this.item.children) {
+    //   for (let child of this.item.children) {
+    //     if (!child.meta || !child.meta.hidden) {
+    //       debugger
+    //       return child
+    //     }
+    //   }
+    // }
+    // If there is no children, return itself with path removed,如果没有子项，则返回本身并删除路径
+    // because this.basePath already conatins item's path information因为这条路径已经形成了一个标题“路径信息”
     return { ...this.item, path: '' }
   }
 
